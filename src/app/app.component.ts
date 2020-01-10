@@ -14,9 +14,6 @@ export class AppComponent implements OnInit {
   private newLineRegex = /\n/;
   private varDeclarationRegex = new RegExp(/![a-z].*=/gi);
 
-  private messageByLines: string[];
-  private variablesAndValues = [];
-
   constructor(private fb: FormBuilder) {
 
   }
@@ -30,41 +27,25 @@ export class AppComponent implements OnInit {
 
   public submitForm(): void {
     const { data: value } = this.myForm.value;
-    const variablesAndValues = [];
 
+    let variableAndValue = {name: null, value: null};
     const lines = value.split(this.newLineRegex);
-    this.messageByLines = lines;
-    for (const line of lines) {
-      if (this.varDeclarationRegex.test(line)) {
-        variablesAndValues.push(this.getVariableNameAndValue(line));
-      }
-    }
-    
-    console.log(variablesAndValues);
-    console.log(this.replaceVariablesWithValues(lines, variablesAndValues));
-  }
 
-  private replaceVariablesWithValues(lines, variablesAndValues) {
     let counter = 0;
-    for (const variable of variablesAndValues) {
-      for (let i = 0; i < lines.length; i++) {
-        counter++;
-        if (counter > 150) {
-          return;
-        }
 
-        if (lines[i].includes(`@${variable.name}`)) {
-          console.log('Before', lines[i]);
-          const modified = lines[i].replace(`@${variable.name}`, variable.value);
-          lines[i] = modified;
-          console.log('After', modified);
-          
-          i--;
+    for (let i = 0; i<lines.length; i++) {
+      if (counter > 160) return;
+      if (lines[i].includes(this.varDeclarationRegex)) {
+        variableAndValue = this.getVariableNameAndValue(lines[i]);
+        for (let i=0; i<lines.length; i++) {
+          counter++;
+          if (lines[i].includes(`@${variableAndValue.name}`)) {
+            lines[i] = this.replaceWithValue(lines[i], variableAndValue);
+            i--;
+          }
         }
       }
     }
-
-    return lines;
   }
 
   private replaceWithValue(line, variable) {
@@ -82,3 +63,26 @@ export class AppComponent implements OnInit {
     }
   }
 }
+
+  // private replaceVariablesWithValues(lines, variablesAndValues) {
+  //   let counter = 0;
+  //   for (const variable of variablesAndValues) {
+  //     for (let i = 0; i < lines.length; i++) {
+  //       counter++;
+  //       if (counter > 150) {
+  //         return;
+  //       } // this is for safety, protecting against infinite loops
+
+  //       if (lines[i].includes(`@${variable.name}`)) {
+  //         console.log('Before', lines[i]);
+  //         const modified = lines[i].replace(`@${variable.name}`, variable.value);
+  //         lines[i] = modified;
+  //         console.log('After', modified);
+          
+  //         i--;
+  //       }
+  //     }
+  //   }
+
+  //   return lines;
+  // }
