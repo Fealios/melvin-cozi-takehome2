@@ -1,9 +1,14 @@
-<form (submit)="submitForm()" [formGroup]="myForm">
-  <textarea formControlName="data" cols="50" rows="20"></textarea>
-  <br>
-  <button type="submit">submit</button>
-</form>
-
-<div id="message-container" *ngIf="message">
-  {{message}}
+<div id="outer">
+  <div id="form-container">
+    <form (submit)="submitForm()" [formGroup]="myForm">
+      <textarea formControlName="data" cols="50" rows="20"></textarea>
+      <br>
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+  
+  
+  <div id="message-container" *ngIf="message">
+    {{message}}
+  </div>
 </div>

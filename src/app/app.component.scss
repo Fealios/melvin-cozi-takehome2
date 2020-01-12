@@ -1,7 +1,36 @@
 #message-container {
-    border: solid;
+    border: solid 2px grey;
+    border-radius: 4px;
+    padding: 5px;
     white-space: pre-wrap;
-    width: 500px;
+    max-width: 500px;
     height: 600px;
+    overflow-y: scroll;
     font-size: 12px;
+}
+
+#outer {
+    display: flex;
+    flex-direction: row;
+    div {
+        margin: 5px;
+    }
+}
+
+#form-container {
+    height: 600px;
+    max-width: 500px;
+
+    button {
+        width: 80px;
+        height: 30px;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+    textarea {
+        border: solid 2px grey;
+        padding: 4px;
+        border-radius: 4px;
+    }
 }

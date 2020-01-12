@@ -58,8 +58,10 @@ export class AppComponent implements OnInit {
         for (let j=0; j<lines.length; j++) {
           if (lines[j].includes(`@${variableAndValue.name}`)) {
             lines[j] = this.replaceWithValue(lines[j], variableAndValue, false);
+            j--
           } else if (lines[j].includes(`@{${variableAndValue.name}}`)) {
             lines[j] = this.replaceWithValue(lines[j], variableAndValue, true);
+            j--
           }
         }
       }
