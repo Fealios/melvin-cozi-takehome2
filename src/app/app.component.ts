@@ -10,9 +10,10 @@ export class AppComponent implements OnInit {
   title = 'cozi2-takehome';
 
   public myForm;
+  public message;
 
-  private newLineRegex = /(\n)/;
-  private varDeclarationRegex = new RegExp(/![a-z].*=/gi);
+  private newLineRegex = /(\n)/; // separate message by returns and keep the return notation
+  private varDeclarationRegex = new RegExp(/![a-z].*=/gi); // detect a variable declation in message
 
   constructor(private fb: FormBuilder) {
 
@@ -29,10 +30,22 @@ export class AppComponent implements OnInit {
     const { data: value } = this.myForm.value;
 
     const lines = value.split(this.newLineRegex);
-    console.log(lines);
+    /* 
+      The core assumption of my entire app is predicated here.
+      I am assuming that no one would paste a block of the parsed text in here
+      and have something else on the same line as a variable declaration.  
+      Because of this assumption I separate the messages by their lines based on returns,
+      so that I might pick up the variable declarations and parse them through the rest of the block.  
+      I am aware that I could use the exact same strategy, using RegEx to match a value and replace
+      the segment with the variable, but I'm taking the example very literally in this case. 
+    */
     
-
-    // console.log(this.fillVariableValues(lines));
+    const filled = this.fillVariableValues(lines.slice());
+    // console.log(filled);
+    
+    this.message = this.clearVariablesFromMessage(filled).join('');
+    console.log(this.message);
+    
   }
 
   private fillVariableValues(lines): string[] {
@@ -44,7 +57,9 @@ export class AppComponent implements OnInit {
 
         for (let j=0; j<lines.length; j++) {
           if (lines[j].includes(`@${variableAndValue.name}`)) {
-            lines[j] = this.replaceWithValue(lines[j], variableAndValue);
+            lines[j] = this.replaceWithValue(lines[j], variableAndValue, false);
+          } else if (lines[j].includes(`@{${variableAndValue.name}}`)) {
+            lines[j] = this.replaceWithValue(lines[j], variableAndValue, true);
           }
         }
       }
@@ -53,8 +68,9 @@ export class AppComponent implements OnInit {
     return lines;
   }
 
-  private replaceWithValue(line, variable) {
-    return line.replace(`@${variable.name}`, variable.value);
+  private replaceWithValue(line, variable, curly): string {
+    if(curly) return line.replace(`@{${variable.name}}`, variable.value)
+    else return line.replace(`@${variable.name}`, variable.value);
   }
 
   private getVariableNameAndValue(line: string): any {
@@ -66,5 +82,25 @@ export class AppComponent implements OnInit {
       name: varName,
       value: split[1]
     }
+  }
+
+  private clearVariablesFromMessage(lines): string[] {
+    const holder = []
+    for (let i=0; i<lines.length; i++) {
+      if (!this.varDeclarationRegex.test(lines[i])) {
+        holder.push(lines[i]);
+      }
+    }
+    return this.clearWhitespace(holder);
+  }
+
+  private clearWhitespace(lines): string[] {
+    const holder = [];
+    for (const line of lines) {
+      if (line !== '""') {
+        holder.push(line);
+      }
+    }
+    return holder;
   }
 }
