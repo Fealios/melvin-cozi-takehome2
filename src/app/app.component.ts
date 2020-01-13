@@ -73,17 +73,21 @@ export class AppComponent implements OnInit {
   private replaceWithValue(line, variable, curly): string {
     if(curly) return line.replace(`@{${variable.name}}`, variable.value)
     else return line.replace(`@${variable.name}`, variable.value);
+    // here is where we swap out the variable for the value
   }
 
   private getVariableNameAndValue(line: string): any {
     let split: string[] = line.split('=');
+    // split the declaration by the '=' sign to capture name then value
     const chars = split[0].split('');
     const varName = chars.slice(1, chars.length).join('');
+    // chop off the '!' declaritive symbol
 
     return {
       name: varName,
       value: split[1]
     }
+    // returns an object that contains the variables name, and its value
   }
 
   private clearVariablesFromMessage(lines): string[] {
@@ -104,5 +108,6 @@ export class AppComponent implements OnInit {
       }
     }
     return holder;
+    // chopping off extra whitespace 
   }
 }

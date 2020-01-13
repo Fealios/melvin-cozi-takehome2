@@ -11,6 +11,7 @@
 
 #outer {
     display: flex;
+    flex-wrap: wrap;
     flex-direction: row;
     div {
         margin: 5px;
@@ -18,7 +19,7 @@
 }
 
 #form-container {
-    height: 600px;
+    max-height: 600px;
     max-width: 500px;
 
     button {
